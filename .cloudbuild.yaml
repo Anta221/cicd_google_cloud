@@ -1,70 +1,12 @@
-cache:
-  paths:
-    - .m2/repository
-    - target 
-    - node_module
+steps:
 
-stages: 
-  - compile
-  - test
-  - dockerize
+- name: docker-maven
+  dir: 'app/'
+  args: ['build' , '-t' , '1508226846/maven:latest' , '.']
+  args: ['push' , '-t' , '1508226846/maven:latest' ]
 
-compile-java:
-  image: maven:latest
-  stage: compile
-  script: 
-    - mvn clean install -DskipTest
 
-compile-abc:
-  image: maven:latest
-  stage: compile
-  script: 
-    - mvn clean install -DskipTest
-  only:
-    - abc
-
-test-java:
-  image: maven:latest
-  stage: test 
-  script: 
-    - mvn test
-
-compile-javascript:
-  image: node:latest
-  stage: compile
-  script: 
-    - cd jsproject
-    - npm i 
-    - npm run build
-
-test-javascript:
-  image: node:latest
-  stage: test
-  script: 
-    - cd jsproject
-    - npm run test
-
-docker-java: 
-  image: docker:latest
-  stage: dockerize
-  services: 
-    - docker:dind
-  before_script:
-    - docker login -u $DOCKERLOGIN -p $DOCKERMDP
-  script: 
-    - docker build -t 1508226846/mavenImage:1.0 .
-    - docker push 1508226846/mavenImage:1.0 
-
-docker-javascript: 
-  image: docker:latest
-  stage: dockerize
-  services: 
-    - docker:dind
-  before_script:
-    - docker login -u $DOCKERLOGIN -p $DOCKERMDP
-  script: 
-    - cd Node_Exo_Back-master
-    - docker build -t 1508226846/nodeimage:1.0 .
-    - docker push 1508226846/nodeimage:1.0 
-     
-
+- name: docker-node
+  dir: 'app/'
+  args: ['build' , '-t' , '1508226846/node:1.0' , '.']
+  args: ['push' , '-t' , '1508226846/node:1.0' ]
