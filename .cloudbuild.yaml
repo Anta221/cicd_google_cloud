@@ -1,12 +1,14 @@
 steps:
 
 - name: docker-maven
-  dir: 'app/'
+  dir: 'Node_Exo_Back-master/'
   args: ['build' , '-t' , '1508226846/maven:latest' , '.']
   args: ['push' , '-t' , '1508226846/maven:latest' ]
 
 
 - name: docker-node
-  dir: 'app/'
+  dir: 'Node_Exo_Back-master/'
   args: ['build' , '-t' , '1508226846/node:1.0' , '.']
   args: ['push' , '-t' , '1508226846/node:1.0' ]
+
+ 
