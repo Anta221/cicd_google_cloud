@@ -1,0 +1,46 @@
+image: maven:latest
+
+variables:
+  MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=./.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+build_job:
+  stage: build
+  script:
+    - mvn clean install
+
+test_job:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+
+javascript:
+    stage: deploy
+    image: node:latest 
+    script:
+      - cd Node_Exo_Back-master
+      - npm install
+cache:
+  paths:
+    - .m2/repository
+  # keep cache across branch
+  key: "$CI_BUILD_REF_NAME"
+
+maven_job:
+  script:
+    - mvn clean install
+    
+deploy-docker-maven:  
+  image: docker:latest
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $USERNAME -p $PASSWORD docker.io
+  script:
+    - docker build -t 1508226846/maven:1.0 .
+    - docker push  1508226846/maven:1.0
+
+  only:
+    - master
+
